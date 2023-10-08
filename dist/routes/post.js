@@ -22,52 +22,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importStar(require("mongoose"));
-const UserSchema = new mongoose_1.Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-        trim: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    avatar: {
-        type: String,
-    },
-    bio: {
-        type: String,
-        trim: true,
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-    isVerified: {
-        type: Boolean,
-        default: false,
-    },
-    verificationOTP: {
-        type: String,
-    },
-    verificationOTPExpires: {
-        type: Number
-    },
-    resetPasswordToken: {
-        type: String,
-    },
-    resetPasswordExpires: {
-        type: Number,
-    },
-});
-exports.default = mongoose_1.default.model("User", UserSchema);
+const express_1 = __importDefault(require("express"));
+const authorize_1 = require("../middlewares/authorize");
+const post = __importStar(require("../controllers/post"));
+const router = express_1.default.Router();
+router.get("/", post.getAllPosts);
+router.get("/:userId", post.getPostsByUser);
+router.post("/", authorize_1.authorizeUser, post.createPost);
+router.delete("/:id", authorize_1.authorizeUser, post.deletePost);
+router.put("/:id", authorize_1.authorizeUser, post.editPost);
+router.delete("/:commentId", authorize_1.authorizeUser, post.deleteComment);
+router.post("/:postId", authorize_1.authorizeUser, post.addComment);
+exports.default = router;

@@ -15,17 +15,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authorizeUser = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 require("dotenv/config");
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.secret;
 const authorizeUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    console.log(token);
     if (!token)
-        return res.status(401).json({ message: 'Access denied! No token provided' });
+        return res
+            .status(401)
+            .json({ message: "Access denied! No token provided" });
     try {
         const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
         req.user = {
             id: decoded.userId,
-            isVerified: decoded.isVerified
+            isVerified: decoded.isVerified,
         };
         next();
     }

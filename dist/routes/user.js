@@ -27,10 +27,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const user = __importStar(require("../controllers/user"));
 const authorize_1 = require("../middlewares/authorize");
+const user = __importStar(require("../controllers/user"));
 const router = express_1.default.Router();
 router.post("/register", user.register);
 router.post("/login", user.login);
 router.post("/verify-otp", authorize_1.authorizeUser, user.verifyOTP);
+router.post("/forgot-password", user.forgotPassword);
+router.post("/reset-password", user.resetPassword);
 exports.default = router;

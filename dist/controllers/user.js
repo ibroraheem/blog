@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.verifyOTP = exports.register = void 0;
+exports.resetPassword = exports.forgotPassword = exports.login = exports.verifyOTP = exports.register = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const mailService_1 = require("../utils/mailService");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -101,3 +101,44 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
+const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    try {
+        const user = yield user_1.default.findOne({ email });
+        if (!user)
+            return res.status(400).json({ message: "No such user" });
+        const otp = generateOTP();
+        user.resetPasswordToken = otp;
+        user.resetPasswordExpires = Date.now() + 36000;
+        yield user.save();
+        yield (0, mailService_1.sendMail)(email, "Password Reset", `Your OTP is: ${otp}. <br> Epires in 10 minutes`);
+        res.status(200).json({ message: "Password Reset OTP sent to email" });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Server Error" });
+    }
+});
+exports.forgotPassword = forgotPassword;
+const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { passwordResetToken, newPassword } = req.body;
+    try {
+        const hashedPassword = yield bcryptjs_1.default.hash(newPassword, SALT_ROUNDS);
+        const user = yield user_1.default.findOne({ resetPasswordToken: passwordResetToken });
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+        if (Date.now() < user.resetPasswordExpires)
+            return res.status(400).json({ message: "OTP Expired" });
+        user.password = hashedPassword;
+        user.resetPasswordToken = " ";
+        user.resetPasswordExpires = 0;
+        yield user.save();
+        res.status(200).json({ message: "Successfully updated the password" });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal Server error" });
+    }
+});
+exports.resetPassword = resetPassword;
