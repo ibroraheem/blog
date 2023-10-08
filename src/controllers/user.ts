@@ -95,4 +95,44 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+export const forgotPassword = async (req: Request, res: Response) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "No such user" });
+    const otp = generateOTP();
+    user.resetPasswordToken = otp;
+    user.resetPasswordExpires = Date.now() + 36000;
+    await user.save();
+    await sendMail(
+      email,
+      "Password Reset",
+      `Your OTP is: ${otp}. <br> Epires in 10 minutes`
+    );
+    res.status(200).json({ message: "Password Reset OTP sent to email" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
 
+export const resetPassword = async (req: Request, res: Response) => {
+  const { passwordResetToken, newPassword } = req.body;
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+    const user = await User.findOne({ resetPasswordToken: passwordResetToken });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    if (Date.now() < user.resetPasswordExpires)
+      return res.status(400).json({ message: "OTP Expired" });
+    user.password = hashedPassword;
+    user.resetPasswordToken = " ";
+    user.resetPasswordExpires = 0;
+    await user.save();
+    res.status(200).json({ message: "Successfully updated the password" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
