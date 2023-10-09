@@ -10,6 +10,7 @@ require("dotenv/config");
 const user_1 = __importDefault(require("./routes/user"));
 const post_1 = __importDefault(require("./routes/post"));
 const app = (0, express_1.default)();
+exports.default = app;
 const PORT = process.env.PORT;
 app.use(express_1.default.json());
 app.use((0, morgan_1.default)("combined"));
@@ -18,7 +19,7 @@ app.get("/", (req, res) => {
     res.send("Blog API is up and running!!!");
 });
 app.use("/user", user_1.default);
-app.use("post", post_1.default);
+app.use("/post", post_1.default);
 app.listen(PORT, () => {
     console.log(`Server is listening on port: ${PORT}`);
 });

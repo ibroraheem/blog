@@ -7,6 +7,7 @@ export interface IPost extends Document {
   category: string;
   tags: string[];
   comments: string[];
+  likes: string[];
   createdAt: Date;
   views: number;
   updatedAt: Date;
@@ -44,10 +45,12 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  category: {
-    type: String,
-    required: true,
-  },
+  category: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
   views: {
     type: Number,
     default: 0,
@@ -57,12 +60,18 @@ const postSchema = new mongoose.Schema({
       type: String,
     },
   ],
-  comments: [
-    {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment'
-    }
-  ],
+  comments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment',
+    default: []
+}],
+
+likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Like',
+    default: []
+}],
+
   createdAt: {
     type: Date,
     default: Date.now,
@@ -102,7 +111,7 @@ const likeSchema = new mongoose.Schema({
     ref: "Post",
     required: true,
   },
-  user: {
+  author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,

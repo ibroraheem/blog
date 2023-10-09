@@ -12,28 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authorizeUser = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-require("dotenv/config");
-const JWT_SECRET = process.env.secret;
-const authorizeUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-    if (!token)
-        return res
-            .status(401)
-            .json({ message: "Access denied! No token provided" });
-    try {
-        const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
-        const user = req.user = {
-            id: decoded.userId,
-            isVerified: decoded.isVerified,
-        };
-        next();
-    }
-    catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: "Invalid token" });
-    }
+exports.createNotification = void 0;
+// utils/notificationHelper.ts
+const notification_1 = __importDefault(require("../models/notification"));
+const createNotification = (userId, postId, type, message) => __awaiter(void 0, void 0, void 0, function* () {
+    const notification = new notification_1.default({ userId, postId, type, message });
+    yield notification.save();
 });
-exports.authorizeUser = authorizeUser;
+exports.createNotification = createNotification;

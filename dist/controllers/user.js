@@ -93,11 +93,11 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const token = jsonwebtoken_1.default.sign({ userId: user._id, isVerified: user.isVerified }, JWT_SECRET, { expiresIn: TOKEN_LIFESPAN });
         res
             .status(200)
-            .json({ message: `${user.username} successfully logged in` });
+            .json({ message: `${user.username} successfully logged in`, token });
     }
     catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Error verifying OTP" });
+        return res.status(500).json({ message: "Error Logging in" });
     }
 });
 exports.login = login;

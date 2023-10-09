@@ -22,10 +22,12 @@ const postSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
-    category: {
-        type: String,
-        required: true,
-    },
+    category: [
+        {
+            type: String,
+            required: true,
+        },
+    ],
     views: {
         type: Number,
         default: 0,
@@ -35,12 +37,16 @@ const postSchema = new mongoose_1.default.Schema({
             type: String,
         },
     ],
-    comments: [
-        {
+    comments: [{
             type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: 'Comment'
-        }
-    ],
+            ref: 'Comment',
+            default: []
+        }],
+    likes: [{
+            type: mongoose_1.default.Schema.Types.ObjectId,
+            ref: 'Like',
+            default: []
+        }],
     createdAt: {
         type: Date,
         default: Date.now,
@@ -78,7 +84,7 @@ const likeSchema = new mongoose_1.default.Schema({
         ref: "Post",
         required: true,
     },
-    user: {
+    author: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "User",
         required: true,

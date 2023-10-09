@@ -15,14 +15,13 @@ export const authorizeUser = async (
 ) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  console.log(token)
   if (!token)
     return res
       .status(401)
       .json({ message: "Access denied! No token provided" });
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as any;
-    req.user = {
+    const user = req.user = {
       id: decoded.userId,
       isVerified: decoded.isVerified,
     };

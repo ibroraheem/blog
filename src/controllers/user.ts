@@ -88,10 +88,10 @@ export const login = async (req: Request, res: Response) => {
     );
     res
       .status(200)
-      .json({ message: `${user.username} successfully logged in` });
+      .json({ message: `${user.username} successfully logged in`, token });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Error verifying OTP" });
+    return res.status(500).json({ message: "Error Logging in" });
   }
 };
 
