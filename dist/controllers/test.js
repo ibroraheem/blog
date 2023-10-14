@@ -24,7 +24,7 @@ describe("Post Controller", () => {
     describe("getAllPosts", () => {
         it("should fetch all posts successfully", () => __awaiter(void 0, void 0, void 0, function* () {
             post_1.Post.find.mockResolvedValue([]);
-            const res = yield (0, supertest_1.default)(index_1.default).get("/path-to-getAllPosts-endpoint");
+            const res = yield (0, supertest_1.default)(index_1.default).get("/post");
             expect(res.status).toBe(200);
             expect(res.body.message).toBe("Post fetched successfully!");
         }));
@@ -39,7 +39,7 @@ describe("Post Controller", () => {
             };
             post_1.Post.prototype.save.mockResolvedValue(postData);
             const res = yield (0, supertest_1.default)(index_1.default)
-                .post("/path-to-createPost-endpoint")
+                .post("/post")
                 .send(postData);
             expect(res.status).toBe(200);
             expect(res.body.message).toBe("Success");
@@ -57,7 +57,7 @@ describe("Post Controller", () => {
                 likes: [],
             };
             post_1.Post.findById.mockResolvedValue(mockPost);
-            const res = yield (0, supertest_1.default)(index_1.default).get("/path-to-getPostById-endpoint/1234");
+            const res = yield (0, supertest_1.default)(index_1.default).get("/post/1234");
             expect(res.status).toBe(200);
             expect(res.body.title).toBe(mockPost.title);
         }));

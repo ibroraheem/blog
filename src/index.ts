@@ -5,8 +5,11 @@ import "dotenv/config";
 import userRoutes from "./routes/user";
 import postRoutes from "./routes/post";
 const app = express();
+
+
 export default app
 const PORT = process.env.PORT;
+
 
 app.use(express.json());
 app.use(morgan("combined"));
